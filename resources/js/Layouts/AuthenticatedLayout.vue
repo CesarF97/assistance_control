@@ -6,13 +6,19 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
-
+import  { useAlertsStore } from '@/Stores/alerts';
+const alerts = useAlertsStore();
+const showFlashAlert = (flash) => {
+    if(flash.error)  alerts.error(flash.error);
+    if(flash.success)  alerts.success(flash.success);
+}
 const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
+            <div v-if="$page.props.flash"> {{ showFlashAlert($page.props.flash) }}</div>
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,6 +37,12 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
+                                </NavLink>
+                            </div>
+
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <NavLink :href="route('employees.index')" :active="route().current('employees.index')">
+                                    Empleados
                                 </NavLink>
                             </div>
                         </div>
@@ -114,6 +126,9 @@ const showingNavigationDropdown = ref(false);
                     <div class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('employees.index')" :active="route().current('employees.index')">
+                            Empleados
                         </ResponsiveNavLink>
                     </div>
 
