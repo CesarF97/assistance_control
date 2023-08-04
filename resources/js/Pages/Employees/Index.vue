@@ -1,18 +1,80 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { useAlertsStore } from '../../Stores/alerts.js';
-import DangerButton from '../../Components/DangerButton.vue';
+import { useAlertsStore } from '@/Stores/alerts.js';
+import DangerButton from '@/Components/DangerButton.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
 import Swal from 'sweetalert2';
+import SecondaryButton from "@/Components/SecondaryButton.vue"
+import PrimaryButton from "@/Components/PrimaryButton.vue"
+import Modal from "@/Components/Modal.vue"
+import {ref, nextTick} from "vue";
+import VueTailwindPagination from "@ocrv/vue-tailwind-pagination"
+
 const alerts = useAlertsStore();
-const props = defineProps({
-    employees: {
-        type: Object,
-    }
-})
-const form = useForm({
-    user: {}
+const showModal = ref(false);
+const title = ref('');
+const operation = ref(1);
+const id = ref('');
+
+const props = defineProps(['employees']);
+
+const form = useForm({ 
+    name:'',
+    email: '',
+    last_name: '',
+    ci: '',
+    rif: '',
+    phone: ''
 });
+
+const formPage = useForm({});
+
+const onPageClick = (event) => {
+    formPage.get(route('employees.index', {page:event}));
+}
+
+const openModal = (op,employee) => {
+    showModal.value = true
+    nextTick(() => nameInput.value.focus());
+    operation.value = op;
+    id.value = employee;
+    if(op == 1) {
+        title.value = "Crear Empleado";
+    } else {
+        title.value = "Editar Empleado";
+        form.name = employee.name;
+        form.email = employee.email;
+        form.last_name = employee.last_name;
+        form.ci = employee.ci;
+        form.rif = employee.rif;
+        form.phone = employee.phone;
+    }
+}
+
+const closeModal = () => {
+    showModal.value = false
+    form.reset();
+}
+
+const save = () => {
+    if(operation.value == 1) {
+        form.post(route('employees.store'),{
+            onSuccess: () => {
+                alerts.success("Empleado Creado")
+            }
+        })
+    } else {
+        form.put(route('employees.update', id.value),{
+            onSuccess: () => {
+                alerts.success("Empleado Actualizado")
+            }
+        })
+    }
+    form.reset();
+}
 
 const deleteEmployee = async (user) => {
     const alert = Swal.mixin({
@@ -55,9 +117,12 @@ const setFullName = (employee) => {
                     <div class="mt-3 mb-3 flex"></div>
                 </div>
 
+                <PrimaryButton class="mb-2" @click="openModal(1)">
+                    <i class="fa-solid fa-plus me-1"></i>Registrar
+                </PrimaryButton>
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table class="w-full text-sm text-left">
-                        <thead class="text-xs text-zinc-50 uppercase bg-neutral-800 text-zinc-50">
+                        <thead class="text-xs text-zinc-50 uppercase bg-neutral-800">
                             <tr>
                                 <th scope="col" class="px-6 py-3">
                                     id
@@ -98,8 +163,9 @@ const setFullName = (employee) => {
                                     {{ employee.email }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="#"
-                                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline me-2">Edit</a>
+                                    <SecondaryButton class="me-2" @click="openModal(2,employee)">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </SecondaryButton>
 
                                     <DangerButton @click="deleteEmployee(employee)">
                                         <i class="fa-solid fa-trash"></i>
@@ -109,8 +175,26 @@ const setFullName = (employee) => {
                         </tbody>
                     </table>
                 </div>
+                <div class="bg-white grid v-screen place-items-center">
+                    <VueTailwindPagination 
+                        :current="employees.currentPage"
+                        :total="employees.total"
+                        :per-page="employees.per_page"
+                        @page-changed="onPageClick($event)">
+                    </VueTailwindPagination>
+                </div>
             </div>
         </div>
+        <Modal :show="showModal" @close="closeModal">
+            <h2 class="p-4 pb-0 text-lg font.medium text-gray-900">{{ title }}</h2>
+            <div class="p-5">
+                <InputLabel for="name" value="Nombre:"></InputLabel>
+                <TextInput id="name" ref="nameInput" v-model="form.name" 
+                type="text" class="mt-1 block w-3/4"
+                placeholder="Nombre"></TextInput>
+                <InputError :message="form.errors.name" class="mt-2"></InputError>
+            </div>
+        </Modal>
     </AuthenticatedLayout>
 </template>
 
