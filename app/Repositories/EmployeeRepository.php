@@ -27,4 +27,8 @@ class EmployeeRepository
     {
         return $employee->delete();
     }
+
+    public function save(Employee $employee){
+        return $employee->save();
+    }
 }

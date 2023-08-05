@@ -1,105 +1,110 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-import { useAlertsStore } from '@/Stores/alerts.js';
-import DangerButton from '@/Components/DangerButton.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
-import InputError from '@/Components/InputError.vue';
-import Swal from 'sweetalert2';
-import SecondaryButton from "@/Components/SecondaryButton.vue"
-import PrimaryButton from "@/Components/PrimaryButton.vue"
-import Modal from "@/Components/Modal.vue"
-import {ref, nextTick} from "vue";
-import VueTailwindPagination from "@ocrv/vue-tailwind-pagination"
+    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+    import { Head, useForm } from '@inertiajs/vue3';
+    import { useAlertsStore } from '@/Stores/alerts.js';
+    import DangerButton from '@/Components/DangerButton.vue';
+    import InputLabel from '@/Components/InputLabel.vue';
+    import TextInput from '@/Components/TextInput.vue';
+    import InputError from '@/Components/InputError.vue';
+    import Swal from 'sweetalert2';
+    import SecondaryButton from "@/Components/SecondaryButton.vue"
+    import PrimaryButton from "@/Components/PrimaryButton.vue"
+    import Modal from "@/Components/Modal.vue"
+    import {ref, nextTick} from "vue";
+    import VueTailwindPagination from "@ocrv/vue-tailwind-pagination"
 
-const alerts = useAlertsStore();
-const showModal = ref(false);
-const title = ref('');
-const operation = ref(1);
-const id = ref('');
+    const alerts = useAlertsStore();
+    const showModal = ref(false);
+    const title = ref('');
+    const operation = ref(1);
+    const nameInput = ref(null)
+    const id = ref('');
 
-const props = defineProps(['employees']);
+    const props = defineProps(['employees']);
 
-const form = useForm({ 
-    name:'',
-    email: '',
-    last_name: '',
-    ci: '',
-    rif: '',
-    phone: ''
-});
+    const form = useForm({ 
+        name:'',
+        email: '',
+        last_name: '',
+        ci: '',
+        rif: '',
+        phone: ''
+    });
 
-const formPage = useForm({});
+    const formPage = useForm({});
 
-const onPageClick = (event) => {
-    formPage.get(route('employees.index', {page:event}));
-}
-
-const openModal = (op,employee) => {
-    showModal.value = true
-    nextTick(() => nameInput.value.focus());
-    operation.value = op;
-    id.value = employee;
-    if(op == 1) {
-        title.value = "Crear Empleado";
-    } else {
-        title.value = "Editar Empleado";
-        form.name = employee.name;
-        form.email = employee.email;
-        form.last_name = employee.last_name;
-        form.ci = employee.ci;
-        form.rif = employee.rif;
-        form.phone = employee.phone;
+    const onPageClick = (event) => {
+        formPage.get(route('employees.index', {page:event}));
     }
-}
 
-const closeModal = () => {
-    showModal.value = false
-    form.reset();
-}
-
-const save = () => {
-    if(operation.value == 1) {
-        form.post(route('employees.store'),{
-            onSuccess: () => {
-                alerts.success("Empleado Creado")
-            }
-        })
-    } else {
-        form.put(route('employees.update', id.value),{
-            onSuccess: () => {
-                alerts.success("Empleado Actualizado")
-            }
-        })
-    }
-    form.reset();
-}
-
-const deleteEmployee = async (user) => {
-    const alert = Swal.mixin({
-        buttonsStyling: true
-    })
-    try {
-        const result = await alert.fire({
-            title: `Seguro que quiere eliminar al empleado ${user.name} ?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: `<i class"fa-solid fa-check"></i>Si, eliminalo`,
-            cancelButtonText: `<i class"fa-solid fa-ban"></i>Cancelar`,
-        })
-
-        if (result.isConfirmed) {
-            form.delete(route('employees.destroy', user));
+    const openModal = (op,employee) => {
+        showModal.value = true
+        nextTick(() => nameInput.value.focus());
+        operation.value = op;
+        id.value = employee;
+        if(op == 1) {
+            title.value = "Crear Empleado";
+        } else {
+            title.value = "Editar Empleado";
+            form.name = employee.name;
+            form.email = employee.email;
+            form.last_name = employee.last_name;
+            form.ci = employee.ci;
+            form.rif = employee.rif;
+            form.phone = employee.phone;
         }
-    } catch (error) {
-        console.error(error)
     }
-}
 
-const setFullName = (employee) => {
-    return `${employee.name} ${employee.last_name}`
-}
+    const closeModal = () => {
+        showModal.value = false
+        form.reset();
+    }
+
+    const save = () => {
+        if(operation.value == 1) {
+            form.post(route('employees.store'),{
+                onSuccess: () => {
+                    alerts.success("Empleado Creado")
+                    form.reset();
+                    closeModal();
+                }
+            })
+        } else {
+            form.put(route('employees.update', id.value),{
+                onSuccess: () => {
+                    alerts.success("Empleado Actualizado")
+                    form.reset();
+                    closeModal();
+                }
+            })
+        }
+        
+    }
+
+    const deleteEmployee = async (user) => {
+        const alert = Swal.mixin({
+            buttonsStyling: true
+        })
+        try {
+            const result = await alert.fire({
+                title: `Seguro que quiere eliminar al empleado ${user.name} ?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: `<i class"fa-solid fa-check"></i>Si, eliminalo`,
+                cancelButtonText: `<i class"fa-solid fa-ban"></i>Cancelar`,
+            })
+
+            if (result.isConfirmed) {
+                form.delete(route('employees.destroy', user));
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const setFullName = (employee) => {
+        return `${employee.name} ${employee.last_name}`
+    }
 
 </script>
 
@@ -185,14 +190,61 @@ const setFullName = (employee) => {
                 </div>
             </div>
         </div>
-        <Modal :show="showModal" @close="closeModal">
-            <h2 class="p-4 pb-0 text-lg font.medium text-gray-900">{{ title }}</h2>
-            <div class="p-5">
-                <InputLabel for="name" value="Nombre:"></InputLabel>
-                <TextInput id="name" ref="nameInput" v-model="form.name" 
-                type="text" class="mt-1 block w-3/4"
-                placeholder="Nombre"></TextInput>
-                <InputError :message="form.errors.name" class="mt-2"></InputError>
+            <Modal :show="showModal" @close="closeModal">
+            <div class="ms-10">
+                <h2 class="p-4 pb-5 text-lg font.medium text-gray-900">{{ title }}</h2>
+                <div class="px-5 pb-3">
+                    <InputLabel for="name" value="Nombre:"></InputLabel>
+                    <TextInput id="name" ref="nameInput" v-model="form.name" 
+                    type="text" class="mt-1 block w-3/4"
+                    placeholder="Nombre"></TextInput>
+                    <InputError :message="form.errors.name" class="mt-2"></InputError>
+                </div>
+                <div class="px-5 pb-3">
+                    <InputLabel for="last_name" value="Apellido:"></InputLabel>
+                    <TextInput id="last_name" v-model="form.last_name" 
+                    type="text" class="mt-1 block w-3/4"
+                    placeholder="Apellido"></TextInput>
+                    <InputError :message="form.errors.last_name" class="mt-2"></InputError>
+                </div>
+                <div class="px-5 pb-3">
+                    <InputLabel for="email" value="Correo:"></InputLabel>
+                    <TextInput id="email" v-model="form.email" 
+                    type="text" class="mt-1 block w-3/4"
+                    placeholder="Correo"></TextInput>
+                    <InputError :message="form.errors.email" class="mt-2"></InputError>
+                </div>
+                <div class="px-5 pb-3">
+                    <InputLabel for="ci" value="Cedula:"></InputLabel>
+                    <TextInput id="ci" v-model="form.ci" 
+                    type="text" class="mt-1 block w-3/4"
+                    placeholder="Cedula"></TextInput>
+                    <InputError :message="form.errors.ci" class="mt-2"></InputError>
+                </div>
+                <div class="px-5 pb-3">
+                    <InputLabel for="rif" value="Rif:"></InputLabel>
+                    <TextInput id="rif" v-model="form.rif" 
+                    type="text" class="mt-1 block w-3/4"
+                    placeholder="Rif"></TextInput>
+                    <InputError :message="form.errors.rif" class="mt-2"></InputError>
+                </div>
+                <div class="px-5 pb-3">
+                    <InputLabel for="phone" value="Telefono:"></InputLabel>
+                    <TextInput id="phone" v-model="form.phone" 
+                    type="text" class="mt-1 block w-3/4"
+                    placeholder="Telefono"></TextInput>
+                    <InputError :message="form.errors.phone" class="mt-2"></InputError>
+                </div>
+
+                <div class="px-5 mb-5 mt-1 flex justify-around">
+                    <PrimaryButton :disabled="form.processing" @click="save">
+                        <i class="fa-solid fa-save"></i> 
+                        <span class="ms-2">Guardar</span>
+                    </PrimaryButton>
+                    <SecondaryButton @click="closeModal" :disabled="form.processing">
+                        Cancelar
+                    </SecondaryButton>
+                </div>
             </div>
         </Modal>
     </AuthenticatedLayout>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EmployeeStoreRequest;
 use App\Models\Employee;
 use App\Repositories\EmployeeRepository;
 use Illuminate\Http\Request;
@@ -24,24 +25,14 @@ class EmployeeController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(EmployeeStoreRequest $request)
     {
-        //
+        $this->employeeRepository->save(Employee::make($request->validated()));
     }
 
-    public function show(Employee $employee)
+    public function update(EmployeeStoreRequest $request, Employee $employee)
     {
-        //
-    }
-
-    public function edit(Employee $employee)
-    {
-        //
-    }
-
-    public function update(Request $request, Employee $employee)
-    {
-        //
+        $this->employeeRepository->save($employee->fill($request->validated()));
     }
 
     public function destroy(Employee $employee)
