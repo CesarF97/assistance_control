@@ -185,7 +185,8 @@
                         :current="employees.currentPage"
                         :total="employees.total"
                         :per-page="employees.per_page"
-                        @page-changed="onPageClick($event)">
+                        @page-changed="onPageClick($event)"
+                        preserve-scroll>
                     </VueTailwindPagination>
                 </div>
             </div>
