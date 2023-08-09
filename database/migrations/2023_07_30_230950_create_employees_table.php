@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('rif',50)->unique();
             $table->string('email',50)->unique();
             $table->string('phone',50);
+            $table->string('qr')->nullable();
             $table->timestamps();
         });
     }
