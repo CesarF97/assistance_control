@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Employee extends Model
 {
@@ -15,8 +17,12 @@ class Employee extends Model
     {
         parent::boot();
 
-        static::creating(function ($model) {
-            $model->qr = 'https://t3.gstatic.com/licensed-image?q=tbn:ANd9GcSh-wrQu254qFaRcoYktJ5QmUhmuUedlbeMaQeaozAVD4lh4ICsGdBNubZ8UlMvWjKC';
+        static::created(function ($model) {
+            $image = QrCode::generate($model->ci);
+            $output_file = '/images/qr-code/'.$model->id.'.svg';
+            Storage::disk('public')->put($output_file, $image);
+            $model->qr = '../storage/images/qr-code/'.$model->id.'.svg';
+            $model->save();
         });
     }
 
