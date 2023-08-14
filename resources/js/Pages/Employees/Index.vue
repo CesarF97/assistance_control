@@ -21,7 +21,7 @@ const title = ref("");
 const operation = ref(1);
 const nameInput = ref(null);
 const id = ref("");
-const qrImage = ref('')
+const qrImage = ref("");
 
 const props = defineProps(["employees"]);
 
@@ -62,9 +62,9 @@ const openModal = (op, employee) => {
   }
 };
 
-const openQRModal =  (employee) => {
-    selectedEmployee.value = employee;
-    showQRModal.value = true;
+const openQRModal = (employee) => {
+  selectedEmployee.value = employee;
+  showQRModal.value = true;
 };
 
 const closeModal = () => {
@@ -120,6 +120,9 @@ const deleteEmployee = async (user) => {
 const setFullName = (employee) => {
   return `${employee.name} ${employee.last_name}`;
 };
+const setDownloadName = (employee) => {
+  return `${employee.name}_${employee.last_name}_qr.svg`;
+}
 </script>
 
 <template>
@@ -304,7 +307,13 @@ const setFullName = (employee) => {
       <div class="mx-10 mb-3 mt-5 flex justify-around">
         <PrimaryButton>
           <i class="fa-solid fa-save"></i>
-          <span class="ms-2">Guardar</span>
+          <a
+            class="ms-2"
+            :href="selectedEmployee.qr"
+            :download="setDownloadName(selectedEmployee)"
+            target="_blank"
+            >Descargar</a
+          >
         </PrimaryButton>
         <SecondaryButton @click="closeQRModal"> Cancelar </SecondaryButton>
       </div>
