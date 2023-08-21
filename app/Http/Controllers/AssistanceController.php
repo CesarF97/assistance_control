@@ -2,62 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\assistance;
+use App\Models\Assistance;
 use Illuminate\Http\Request;
+use App\Http\Requests\AssistanceRequest;
+use App\Models\Employee;
+use App\Repositories\AssistanceRepository;
 
 class AssistanceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $assistanceRepository;
+    
+    public function __construct(AssistanceRepository $assistanceRepository)
+    {
+        $this->assistanceRepository = $assistanceRepository;
+    }
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(AssistanceRequest $request)
     {
-        //
+        $employee = Employee::whereCi($request->dni)->first();
+        
+        $assistance = Assistance::make([
+            'employee_id' => $employee->id,
+            'type' => $request->type
+        ]);
+        
+        $this->assistanceRepository->save($assistance);
+        
+        return back()->with('success', 'Accion Realizada Exitosamente');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(assistance $assistance)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(assistance $assistance)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, assistance $assistance)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(assistance $assistance)
     {
         //

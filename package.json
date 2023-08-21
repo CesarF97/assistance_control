@@ -29,6 +29,7 @@
         "pdfmake": "^0.2.7",
         "pinia": "^2.1.6",
         "sweetalert2": "^11.7.20",
-        "vue-chartjs": "^5.2.0"
+        "vue-chartjs": "^5.2.0",
+        "vue3-qrcode-reader": "^0.0.1"
     }
 }
