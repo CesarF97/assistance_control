@@ -12,6 +12,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import Modal from "@/Components/Modal.vue";
 import { ref, nextTick, defineProps } from "vue";
 import VueTailwindPagination from "@ocrv/vue-tailwind-pagination";
+import { Link } from '@inertiajs/vue3'
 
 const alerts = useAlertsStore();
 const selectedEmployee = ref({});
@@ -186,6 +187,10 @@ const setDownloadName = (employee) => {
                     <i class="fa-solid fa-pencil"></i>
                   </SecondaryButton>
 
+                  <Link class="me-2 inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150 cursor-pointer" :href="route('employee.assistances', employee)">
+                    <i class="fa-solid fa-calendar-days"></i>
+                  </Link>
+
                   <DangerButton @click="deleteEmployee(employee)">
                     <i class="fa-solid fa-trash"></i>
                   </DangerButton>
@@ -194,6 +199,7 @@ const setDownloadName = (employee) => {
             </tbody>
           </table>
         </div>
+        <!-- Paginador -->
         <div class="bg-white grid v-screen place-items-center">
           <VueTailwindPagination
             :current="employees.currentPage"
@@ -206,6 +212,7 @@ const setDownloadName = (employee) => {
         </div>
       </div>
     </div>
+    <!-- Modal de creacion / edicion -->
     <Modal :show="showModal" @close="closeModal">
       <div class="ms-10">
         <h2 class="p-4 pb-5 text-lg font.medium text-gray-900">
@@ -293,7 +300,7 @@ const setDownloadName = (employee) => {
         </div>
       </div>
     </Modal>
-
+    <!-- Modal de QR -->
     <Modal :show="showQRModal" @close="closeQRModal" maxWidth="sm">
       <div class="mx-10 mb-5 flex justify-center items-center">
         <img

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EmployeeStoreRequest;
+use App\Http\Resources\AssitanceResource;
 use App\Models\Employee;
+use App\Repositories\AssistanceRepository;
 use App\Repositories\EmployeeRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,10 +14,12 @@ use Inertia\Inertia;
 class EmployeeController extends Controller
 {
     protected $employeeRepository;
+    protected $assistanceRepository;
     
-    public function __construct(EmployeeRepository $employeeRepository)
+    public function __construct(EmployeeRepository $employeeRepository, AssistanceRepository $assistanceRepository)
     {
         $this->employeeRepository = $employeeRepository;
+        $this->assistanceRepository = $assistanceRepository;
     }
 
     public function index()
@@ -44,5 +48,11 @@ class EmployeeController extends Controller
             Log::error($th);
             return back()->with('error', 'Este empleado no puede ser eliminado porque ya posee asistencias registradas');
         }
+    }
+
+    public function showAssistances(Employee $employee)
+    {
+        $assistances = AssitanceResource::collection($this->assistanceRepository->getByEmployeeId($employee->id));
+        return Inertia::render('Employees/ShowAssistances', compact('employee', 'assistances'));
     }
 }

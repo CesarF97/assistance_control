@@ -26,4 +26,9 @@ class AssistanceRepository
     {
         return $assistance->save();
     }
+
+    public function getByEmployeeId(int $id)
+    {
+        return $this->model->where('employee_id', $id)->get();
+    }
 }
