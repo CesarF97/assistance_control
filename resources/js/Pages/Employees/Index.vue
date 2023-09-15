@@ -22,7 +22,6 @@ const title = ref("");
 const operation = ref(1);
 const nameInput = ref(null);
 const id = ref("");
-const qrImage = ref("");
 
 const props = defineProps(["employees"]);
 

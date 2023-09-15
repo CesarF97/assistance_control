@@ -31,4 +31,9 @@ class AssistanceRepository
     {
         return $this->model->where('employee_id', $id)->get();
     }
+
+    public function destroy(Assistance $assistance)
+    {
+        return $assistance->delete();
+    }
 }

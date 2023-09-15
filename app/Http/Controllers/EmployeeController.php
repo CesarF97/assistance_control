@@ -43,7 +43,7 @@ class EmployeeController extends Controller
     {
         try {
             $this->employeeRepository->destroy($employee);
-            return back()->with('success', 'Empleado eliminadoe exitosamente');
+            return back()->with('success', 'Empleado eliminado exitosamente');
         } catch (\Throwable $th) {
             Log::error($th);
             return back()->with('error', 'Este empleado no puede ser eliminado porque ya posee asistencias registradas');
@@ -52,7 +52,6 @@ class EmployeeController extends Controller
 
     public function showAssistances(Employee $employee)
     {
-        $assistances = AssitanceResource::collection($this->assistanceRepository->getByEmployeeId($employee->id));
-        return Inertia::render('Employees/ShowAssistances', compact('employee', 'assistances'));
+        return Inertia::render('Employees/ShowAssistances', compact('employee'));
     }
 }
