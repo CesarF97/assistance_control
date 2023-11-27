@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\EmployeeStoreRequest;
 use App\Http\Resources\AssitanceResource;
+use App\Http\Resources\EmployeeListResource;
 use App\Models\Employee;
 use App\Repositories\AssistanceRepository;
 use App\Repositories\EmployeeRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
@@ -53,5 +55,22 @@ class EmployeeController extends Controller
     public function showAssistances(Employee $employee)
     {
         return Inertia::render('Employees/ShowAssistances', compact('employee'));
+    }
+
+    public function history(Request $request)
+    {
+        $employees = EmployeeListResource::collection($this->employeeRepository->all());
+        $employee_history = [];
+        if($request->isMethod("get")) {
+            return Inertia::render("Employees/History", compact('employees', 'employee_history'));
+        }
+
+        if($request->date_from != "" && $request->date_to != "") {
+            $from = Carbon::parse($request->date_from);
+            $to = Carbon::parse($request->date_to);
+            $employee_history = $this->assistanceRepository->getByEmployeeIdBetweenDates($request->employee_id, $from, $to);
+            return Inertia::render("Employees/History", compact('employees', 'employee_history'));
+        }
+
     }
 }

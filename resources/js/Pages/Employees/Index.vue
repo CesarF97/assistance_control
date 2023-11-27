@@ -138,7 +138,6 @@ const setDownloadName = (employee) => {
     <div class="py-2">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white grid v-screen place-items-center">
-          <div class="mt-3 mb-3 flex"></div>
         </div>
 
         <PrimaryButton class="mb-2" @click="openModal(1)">

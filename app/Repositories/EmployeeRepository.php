@@ -15,7 +15,7 @@ class EmployeeRepository
 
     public function all()
     {
-        return $this->model->with('assistances')->all();
+        return $this->model->with('assistances')->get();
     }
 
     public function getPaginated(int $quantity = 10)

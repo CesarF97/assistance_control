@@ -45,6 +45,11 @@ const showingNavigationDropdown = ref(false);
                                     Empleados
                                 </NavLink>
                             </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <NavLink :href="route('employees.history')" :active="route().current('employees.history')" preserve-scroll>
+                                    Historial de Empleado
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -129,6 +134,9 @@ const showingNavigationDropdown = ref(false);
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('employees.index')" :active="route().current('employees.index')" preserve-scroll>
                             Empleados
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('employees.history')" :active="route().current('employees.history')" preserve-scroll>
+                            Historial de Empleado
                         </ResponsiveNavLink>
                     </div>
 

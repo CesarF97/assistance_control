@@ -36,4 +36,11 @@ class AssistanceRepository
     {
         return $assistance->delete();
     }
+
+    public function getByEmployeeIdBetweenDates($employee_id, $date_from, $date_to)
+    {
+        return $this->model->with('employee')->where('employee_id', $employee_id)->whereDate('created_at', '>=', $date_from)
+            ->whereDate('created_at', '<=', $date_to)
+            ->get();
+    }
 }
